@@ -43,7 +43,7 @@ export function Movie({ movie, onClick }) {
       gap={2}
       cursor="pointer"
       transition="background 0.2s"
-      _hover={{ bg: 'gray.50' }}
+      _hover={{ color: 'blue.100', bg: 'blue.600' }}
       onMouseDown={() => onClick(title)}
     >
       <Badge color="green">{year}</Badge>
