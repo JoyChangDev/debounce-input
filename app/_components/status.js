@@ -1,12 +1,9 @@
 'use client';
 
 import {
-  Stack,
   Text,
   Box,
-  HStack,
   Grid,
-  Flex,
   Badge as ChakraBadge,
 } from '@chakra-ui/react';
 import { HiStar } from 'react-icons/hi';
@@ -33,34 +30,35 @@ export function NoResult() {
   );
 }
 
-export function SearchResult({ movies }) {
+export function Movie({ movie, onClick }) {
+  const { title, release_date, vote_average } = movie;
+  if (!title || !release_date || !vote_average) return null;
+  const year = release_date.split('-')[0];
+  const rate = Math.round(vote_average * 10) / 10;
   return (
-    <Stack gap={0}>
-      {movies.map((movie) => (
-        <Grid
-          key={movie.id}
-          templateColumns="1fr 45px"
-          p={3}
-          alignItems="center"
-          transition="background 0.2s"
-          _hover={{ bg: 'gray.50' }}
-        >
-          <Stack spacing={1}>
-            <Flex gap={2}>
-              <Badge color="green">{movie.year}</Badge>
-              <Text fontWeight="bold">{movie.title}</Text>
-            </Flex>
-            <HStack>
-              <Badge color="purple">{movie.genre}</Badge>
-            </HStack>
-          </Stack>
-          <Badge color="blue">
-            <HiStar />
-            {movie.rating}
-          </Badge>
-        </Grid>
-      ))}
-    </Stack>
+    <Grid
+      templateColumns="40px 1fr 45px"
+      p={3}
+      alignItems="center"
+      gap={2}
+      cursor="pointer"
+      transition="background 0.2s"
+      _hover={{ bg: 'gray.50' }}
+      onMouseDown={() => onClick(title)}
+    >
+      <Badge color="green">{year}</Badge>
+      <Text
+        truncate
+        fontSize="sm"
+        fontWeight={500}
+      >
+        {title}
+      </Text>
+      <Badge color="blue">
+        <HiStar />
+        {rate}
+      </Badge>
+    </Grid>
   );
 }
 

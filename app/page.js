@@ -10,46 +10,57 @@ import { useState, useEffect } from 'react';
 import {
   Loading,
   NoResult,
-  SearchResult,
+  Movie,
 } from '@/components/status';
 import useDebounce from '@/hooks/useDebounce';
-import searchMovies from '@/apis/search';
+import getMovies from '@/apis/movies';
 
 export default function Page() {
   const [input, setInput] = useState('');
   const [results, setResults] = useState([]);
+  const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const debouncedInput = useDebounce(input, 500);
 
+  const handleGetMovies = async (keyword) => {
+    const { results } = await getMovies(keyword);
+    setResults(results);
+    setIsLoading(false);
+  };
+
+  const handleInput = (e) => {
+    setInput(e.target.value);
+    setIsOpen(!!e.target.value);
+  };
+  const handleClick = (value) => setInput(value);
+
   // 當 debounced 輸入改變時搜尋電影
   useEffect(() => {
-    const keyword = debouncedInput.trim();
-    // empty keyword
-    if (!keyword) return setResults([]);
-    // search movies with keyword
     setIsLoading(true);
-
-    setTimeout(async () => {
-      // 模擬 API 延遲
-      const lowerKeyword = keyword.toLowerCase();
-      const response = await searchMovies(lowerKeyword);
-      setResults(response);
-      setIsLoading(false);
-    }, 200);
+    // empty keyword
+    if (!debouncedInput.trim()) return setResults([]);
+    // search movies with keyword
+    const keyword = debouncedInput
+      .toLowerCase()
+      .trim()
+      .split(' ')
+      .join(',');
+    handleGetMovies(keyword);
   }, [debouncedInput]);
 
   return (
-    <Center mt="10%">
+    <Center pt="10%">
       <Stack w="500px">
         <Input
           value={input}
           placeholder="輸入關鍵字"
           _focus={{ borderColor: 'blue.500' }}
           _focusVisible={{ outline: 'none' }}
-          onChange={(e) => setInput(e.target.value)}
+          onChange={handleInput}
+          onBlur={() => setIsOpen(false)}
         />
-        {input && (
+        {isOpen && (
           <Box
             maxH="400px"
             borderRadius="md"
@@ -59,7 +70,15 @@ export default function Page() {
             {isLoading ? (
               <Loading />
             ) : results.length > 0 ? (
-              <SearchResult movies={results} />
+              <Stack gap={0}>
+                {results.map((movie) => (
+                  <Movie
+                    key={movie.id}
+                    movie={movie}
+                    onClick={handleClick}
+                  />
+                ))}
+              </Stack>
             ) : (
               <NoResult />
             )}
