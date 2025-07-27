@@ -5,7 +5,12 @@
     "moduleResolution": "Bundler",
     "skipLibCheck": true,
     "paths": {
-      "@/components/*": ["./components/*"]
+      "@/components/*": [
+        "./components/*",
+        "./app/_components/*"
+      ],
+      "@/hooks/*": ["./app/_hooks/*"],
+      "@/apis/*": ["./app/_apis/*"]
     }
   }
 }
