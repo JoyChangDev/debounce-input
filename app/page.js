@@ -13,7 +13,7 @@ import {
   Movie,
 } from '@/components/status';
 import useDebounce from '@/hooks/useDebounce';
-import getMovies from '@/apis/movies';
+// import getMovies from './apis/movies/route';
 
 export default function Page() {
   const [input, setInput] = useState('');
@@ -24,12 +24,15 @@ export default function Page() {
   const debouncedInput = useDebounce(input, 500);
 
   const handleGetMovies = async (keyword) => {
-    const { results } = await getMovies(keyword);
+    const path = `/apis/movies?keyword=${keyword}`;
+    const response = await fetch(path);
+    const { results } = await response.json();
     setResults(results);
     setIsLoading(false);
   };
 
   const handleInput = (e) => {
+    setIsLoading(true);
     setInput(e.target.value);
     setIsOpen(!!e.target.value);
   };
@@ -37,7 +40,6 @@ export default function Page() {
 
   // 當 debounced 輸入改變時搜尋電影
   useEffect(() => {
-    setIsLoading(true);
     // empty keyword
     if (!debouncedInput.trim()) return setResults([]);
     // search movies with keyword

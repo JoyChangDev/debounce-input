@@ -10,7 +10,7 @@
         "./app/_components/*"
       ],
       "@/hooks/*": ["./app/_hooks/*"],
-      "@/apis/*": ["./app/_apis/*"]
+      "@/apis/*": ["./app/apis/*"]
     }
   }
 }
